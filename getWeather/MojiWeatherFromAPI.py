@@ -5,8 +5,9 @@ __author__ = u'Rex Kang'
 __description__ = u'根据需求，调用墨迹API生成一句话简介。'
 __license__ = u'GPL - http://www.fsf.org/licenses/gpl.txt';
 __history__ = {
-    u'1.0': [u'2017/05/19', u'调用墨迹API，完成基本功能'],
-    u'1.1': [u'2017/06/08', u'调用墨迹API，完成基本功能']
+    u'1.0': [u'2017/05/19', u'调用墨迹API，完成基本功能。'],
+    u'1.1': [u'2017/06/08', u'增加图标，'],
+    u'1.2': [u'2018/09/19', u'获取白天天气替代实况天气，增加图标。']
 }
 import urllib, urllib2, sys, json
 
@@ -91,7 +92,7 @@ def main():
         }
     }
 
-    city = u'海口市'
+    city = u'YourCity'
     appCode = 'YourCodeFromAliyun'
     strList = [''] * 8
     try:
@@ -101,12 +102,14 @@ def main():
         
         if resultOfCondition and 'data' in resultOfCondition:
             cond = resultOfCondition['data']['condition']
-            # strList[0] = getWetaherIcon(cond['condition']) # v1.2 Deleted
+            # v1.2 Deleted
+            # strList[0] = getWetaherIcon(cond['condition'])
             strList[5] = cond['humidity']
 
         if resultOfForecast and 'data' in resultOfForecast:
             fore = resultOfForecast['data']['forecast'][0]
-            strList[0] = getWetaherIcon(fore['conditionDay']) # v1.2 Modified
+            # v1.2 Modified
+            strList[0] = getWetaherIcon(fore['conditionDay'])
             strList[1] = fore['tempNight']
             strList[2] = fore['tempDay']
             strList[3] = fore['windDirDay']
@@ -119,6 +122,7 @@ def main():
         print err
     finally:
         if len(set(strList)) == 8:
+            # v1.2 Modified
             str = u'%s，%s ~ %s℃，🌪%s%s级，💧%s%%，%s%s' % tuple(strList)
             print str.encode('utf-8')
             sys.exit(0)
