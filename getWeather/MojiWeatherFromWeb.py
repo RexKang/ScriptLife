@@ -61,9 +61,9 @@ def main():
     hum_regex = u'湿度：(?P<hum>\d+)%'
     weather_regex = u'今天<\/a>\s+<\/li>\s+<li>[\s\S]{100,200}<\/span>\s+' + \
         u'(?P<weather>[^\s]+)\s+<\/li>\s+<li>(?P<t1>\d+).\s.\s(?P<t2>\d+)' + \
-        u'[\s\S]{10,100}<em>(?P<wind>.+)<\/em>\s+<b>(?P<wind_level>\d+).' + \
-        u'<\/b>[\s\S]{20,100}>\s+(?P<aqi>\d+)\s.\s+<\/strong'
-    #  print weather_regex
+        u'[\s\S]{10,100}<em>(?P<wind>.+)<\/em>\s+<b>' + \
+        u'(?P<wind_level>[\d-]+).<\/b>[\s\S]{20,100}>\s+(?P<aqi>\d+)\s.\s+<\/strong'
+    # print weather_regex
     city = u'海口市'
     strList = [''] * 8
     content = getMojiWeb(city).decode('utf-8')
@@ -76,17 +76,17 @@ def main():
         if not hum_result:
             print("Hum info error.")
             sys.exit(1)
-        # print("hum: %s" % hum_result.groupdict())
 
         weather_result = re.search(weather_regex, content)
         
         if not weather_result:
             print("Weather info error.")
             sys.exit(1)
-        # print("weather: %s" % weather_result.groupdict())
         
         weather_dict = weather_result.groupdict()
         hum_dict = hum_result.groupdict()
+        print("weather: %s" % weather_dict)
+        print("hum: %s" % hum_dict)
 
         strList[0] = getWetaherIcon(weather_dict['weather'])
         strList[1] = weather_dict['t1']
@@ -97,9 +97,9 @@ def main():
         strList[7] = weather_dict['aqi']
         strList[6] = getAOIIcon(weather_dict['aqi'])
     except Exception, err:
-        print err
+        print Exception, err
     finally:
-        if len(set(strList)) == 8:
+        if len(set(strList)) > 4:
             str = u'%s，%s ~ %s℃，🌪%s%s级，💧%s%%，%s%s' % tuple(strList)
             print str.encode('utf-8')
             sys.exit(0)
