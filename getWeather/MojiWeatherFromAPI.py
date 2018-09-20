@@ -121,7 +121,7 @@ def main():
     except Exception, err:
         print err
     finally:
-        if len(set(strList)) == 8:
+        if len(set(strList)) > 4:
             # v1.2 Modified
             str = u'%s，%s ~ %s℃，🌪%s%s级，💧%s%%，%s%s' % tuple(strList)
             print str.encode('utf-8')
