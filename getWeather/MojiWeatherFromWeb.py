@@ -6,6 +6,7 @@ __description__ = u'根据需求，从墨迹Web页面上生成一句话简介。
 __license__ = u'GPL - http://www.fsf.org/licenses/gpl.txt';
 __history__ = {
     u'1.0': [u'2018/09/19', u'分析Web页面，获取关键信息，实现基本功能'],
+    u'1.1': [u'2018/09/27', u'修正没有对应天气图标报错的问题。']
 }
 import urllib2, sys, re
 
@@ -41,12 +42,14 @@ def getWetaherIcon(w=u'晴'):
         u'多云': u'⛅',
         u'阵雨': u'🌦',
         u'雨': u'🌧',
-        u'雷阵雨': u'⛈',
-        u'中雨': u'🌨',
-        u'大雨': u'🌨',
-        u'暴雨': u'🌨'
+        # v1.1 Modified
+        u'雷阵雨': u'🌦',
+        u'中雨': u'⛈',
+        u'大雨': u'⛈',
+        u'暴雨': u'⛈'
     }
-    return weatherIcon.get(w, '阴')
+    # v1.1 Modified
+    return weatherIcon.get(w, u'☁️')
 
 def getAOIIcon(aqi=40):
     icon = u'🌱'
@@ -69,24 +72,24 @@ def main():
     content = getMojiWeb(city).decode('utf-8')
     try:
         if not content or len(content) < 10240:
-            print("Content length error.")
+            # print("Content length error.")
             sys.exit(1)
         hum_result = re.search(hum_regex, content)
         
         if not hum_result:
-            print("Hum info error.")
+            # print("Hum info error.")
             sys.exit(1)
 
         weather_result = re.search(weather_regex, content)
         
         if not weather_result:
-            print("Weather info error.")
+            # print("Weather info error.")
             sys.exit(1)
         
         weather_dict = weather_result.groupdict()
         hum_dict = hum_result.groupdict()
-        print("weather: %s" % weather_dict)
-        print("hum: %s" % hum_dict)
+        # print("weather: %s" % weather_dict)
+        # print("hum: %s" % hum_dict)
 
         strList[0] = getWetaherIcon(weather_dict['weather'])
         strList[1] = weather_dict['t1']
@@ -97,7 +100,8 @@ def main():
         strList[7] = weather_dict['aqi']
         strList[6] = getAOIIcon(weather_dict['aqi'])
     except Exception, err:
-        print Exception, err
+        # print Exception, err
+        pass
     finally:
         if len(set(strList)) > 4:
             str = u'%s，%s ~ %s℃，🌪%s%s级，💧%s%%，%s%s' % tuple(strList)
