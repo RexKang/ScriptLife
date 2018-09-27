@@ -7,7 +7,8 @@ __license__ = u'GPL - http://www.fsf.org/licenses/gpl.txt';
 __history__ = {
     u'1.0': [u'2017/05/19', u'调用墨迹API，完成基本功能。'],
     u'1.1': [u'2017/06/08', u'增加图标，'],
-    u'1.2': [u'2018/09/19', u'获取白天天气替代实况天气，增加图标。']
+    u'1.2': [u'2018/09/19', u'获取白天天气替代实况天气，增加图标。'],
+    u'1.3': [u'2018/09/27', u'修正没有对应天气图标报错的问题。']
 }
 import urllib, urllib2, sys, json
 
@@ -55,11 +56,14 @@ def getWetaherIcon(w=u'晴'):
         u'多云': u'⛅',
         u'阵雨': u'🌦',
         u'雨': u'🌧',
+        # v1.3 Modified
+        u'雷阵雨': u'🌦',
         u'中雨': u'⛈',
         u'大雨': u'⛈',
         u'暴雨': u'⛈'
     }
-    return weatherIcon.get(w, '阴')
+    # v1.3 Modified
+    return weatherIcon.get(w, u'☁️')
 
 def getAOIIcon(aqi=40):
     icon = u'🌱'
@@ -92,8 +96,8 @@ def main():
         }
     }
 
-    city = u'YourCity'
-    appCode = 'YourCodeFromAliyun'
+    city = u'海口市'
+    appCode = '86a53c38ddb546878deab2f87f106e7c'
     strList = [''] * 8
     try:
         resultOfCondition = mojiAPI(API['BriefCondition'], getCityID(city), appCode)
@@ -119,7 +123,9 @@ def main():
             strList[7] = resultOfAQI['data']['aqi']['value']
             strList[6] = getAOIIcon(strList[7]) # v1.1 Modified
     except Exception, err:
-        print err
+        # print err
+        pass
+
     finally:
         if len(set(strList)) > 4:
             # v1.2 Modified
